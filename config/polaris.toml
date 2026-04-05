@@ -1,0 +1,39 @@
+[server]
+bind = "0.0.0.0:8053"
+
+[resolver]
+root_hints_path = "config/root.hints"
+# trust_anchor_path = "config/root.key"
+ns_cache_size = 2048
+record_cache_size = 1048576
+recursion_limit = 16
+ns_recursion_limit = 16
+resolve_timeout_ms = 3500
+nameserver_allow_cidrs = []
+nameserver_deny_cidrs = []
+
+[filter]
+exact_allow = []
+exact_block = []
+suffix_allow = []
+suffix_block = []
+block_mode = "nx_domain"
+sinkhole_ipv4 = "0.0.0.0"
+sinkhole_ipv6 = "::"
+sinkhole_ttl = 60
+
+[limits]
+max_post_body_bytes = 4096
+max_get_dns_param_bytes = 8192
+max_dns_wire_bytes = 4096
+max_json_name_bytes = 255
+max_concurrent_requests = 10000
+http_request_timeout_ms = 5000
+
+[readiness]
+startup_self_check = true
+self_check_name = "."
+
+[logging]
+json = false
+filter = "info,polaris=info"

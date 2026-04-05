@@ -1,0 +1,61 @@
+# --- Rust / Cargo ---
+target/
+debug/
+**/*.rs.bk
+*.pdb
+**/mutants.out*/
+
+# --- Build / Coverage / Profiling ---
+*.profraw
+*.profdata
+coverage/
+lcov.info
+
+# --- Environment / Local Config ---
+.env
+.env.*
+!.env.example
+
+# --- OS Artifacts ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100/
+.Trashes/
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# --- Editors / IDEs ---
+.idea/
+*.iml
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+!*.code-workspace
+*.vsix
+*.suo
+*.user
+*.userossc
+*.sln.docstates
+
+# --- Vim / Emacs / Generic Editor Temp ---
+*.swp
+*.swo
+*~
+\#*\#
+
+# --- AI Coding Tool Artifacts ---
+.codex
+.codex/
+.aider*
+.cursor/
+.windsurf/
+.claude/
+.avante*
+
+# --- Logs ---
+*.log
