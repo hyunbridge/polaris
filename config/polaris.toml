@@ -3,6 +3,7 @@ bind = "0.0.0.0:8053"
 
 [resolver]
 root_hints_path = "config/root.hints"
+forward_upstreams = [] # ex: ["1.1.1.1", "8.8.8.8:53"] (non-empty => forward mode)
 # trust_anchor_path = "config/root.key"
 ns_cache_size = 2048
 record_cache_size = 1048576

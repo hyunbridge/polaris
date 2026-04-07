@@ -12,7 +12,11 @@ use tracing::{error, info};
 use tracing_subscriber::EnvFilter;
 
 #[derive(Debug, Parser)]
-#[command(name = "polaris", version, about = "Polaris: lightweight pure-Rust DoH resolver")]
+#[command(
+    name = "polaris",
+    version,
+    about = "Polaris: lightweight pure-Rust DoH resolver"
+)]
 struct Cli {
     #[arg(long, env = "POLARIS_CONFIG", default_value = "config/polaris.toml")]
     config: PathBuf,

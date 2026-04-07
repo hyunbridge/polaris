@@ -56,6 +56,10 @@ pub struct ResolverConfig {
     /// Root hints file path. Polaris fails startup if this file is missing or empty.
     #[serde(default = "default_root_hints_path")]
     pub root_hints_path: PathBuf,
+    /// Optional upstream DNS resolvers in `IP` or `IP:PORT` format.
+    /// If non-empty, Polaris runs in forwarding mode instead of direct recursion.
+    #[serde(default)]
+    pub forward_upstreams: Vec<String>,
     /// Optional DNSSEC trust anchor file override.
     #[serde(default)]
     pub trust_anchor_path: Option<PathBuf>,
@@ -79,6 +83,7 @@ impl Default for ResolverConfig {
     fn default() -> Self {
         Self {
             root_hints_path: default_root_hints_path(),
+            forward_upstreams: Vec::new(),
             trust_anchor_path: None,
             ns_cache_size: default_ns_cache_size(),
             record_cache_size: default_record_cache_size(),

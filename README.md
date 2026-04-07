@@ -12,8 +12,10 @@ It is designed to run behind a separate HTTPS reverse proxy, and Polaris serves 
 - JSON compatibility API (debug/interop)
   - `GET /dns-query?name=...&type=...&do=...&cd=...`
   - `POST /dns-query` with `Content-Type: application/json`
-- Direct iterative recursion using Hickory recursor (no upstream recursive forwarding)
-- DNSSEC validation enabled
+- Dual resolver mode:
+  - direct iterative recursion using Hickory recursor
+  - optional upstream forwarding mode (`forward_upstreams`)
+- DNSSEC validation enabled in both modes (recursive + forwarding)
 - Custom in-memory filter engine
   - exact allow / exact block
   - suffix allow / suffix block
@@ -40,7 +42,7 @@ Request flow:
 4. Normalize name (lowercase, IDN to A-label, trailing-dot normalization)
 5. Filter lookup
 6. If blocked: synthesize local response (NXDOMAIN or sinkhole)
-7. If allowed: recursive resolve with Hickory
+7. If allowed: resolve via recursive mode or forwarding mode
 8. Return wire-format response (RFC 8484) or JSON response
 
 ## Repository layout
@@ -51,7 +53,7 @@ src/
   app.rs         # router wiring
   handlers.rs    # DoH wire/json handlers + health/readiness endpoints
   dns.rs         # DNS parse/validate/response synthesis helpers
-  resolver.rs    # Hickory recursor manager + generation swap
+  resolver.rs    # recursive/forward resolver manager + generation swap
   filter.rs      # custom filter engine
   readiness.rs   # readiness state model
   state.rs       # shared app state
@@ -80,6 +82,7 @@ bind = "0.0.0.0:8053"
 
 [resolver]
 root_hints_path = "config/root.hints"
+forward_upstreams = [] # ex: ["1.1.1.1", "8.8.8.8:53"] (non-empty => forwarding mode)
 # trust_anchor_path = "config/root.key"
 ns_cache_size = 2048
 record_cache_size = 1048576
@@ -116,8 +119,8 @@ json = false
 filter = "info,polaris=info"
 ```
 
-`root_hints_path` is required at runtime.  
-If the file is missing or empty, Polaris fails fast on startup.
+`root_hints_path` is required only in direct recursive mode.  
+If `forward_upstreams` is non-empty, Polaris runs in forwarding mode and does not load root hints.
 
 ## Run
 
@@ -202,11 +205,19 @@ docker build -t polaris:latest .
 docker run --rm -p 8053:8053 polaris:latest
 ```
 
+Custom config example:
+
+```bash
+docker run --rm -p 8053:8053 \
+  -v "$(pwd)/config:/app/config:ro" \
+  polaris:latest --config /app/config/polaris.toml
+```
+
 ## Operational notes
 
 - Deploy behind a separate HTTPS reverse proxy.
 - Polaris itself is plain HTTP.
-- Keep root hints fresh (`config/root.hints`) as part of ops maintenance.
+- In direct recursive mode, keep root hints fresh (`config/root.hints`) as part of ops maintenance.
 - If you supply a custom trust anchor file, ensure it is updated and valid.
 - JSON DoH endpoint is for compatibility/debugging, not the primary hot path.
 
