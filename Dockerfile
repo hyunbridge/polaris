@@ -7,7 +7,7 @@ COPY config ./config
 
 RUN cargo build --release
 
-FROM gcr.io/distroless/base-nossl-debian13:nonroot
+FROM gcr.io/distroless/cc-debian13:nonroot
 WORKDIR /app
 
 COPY --from=build /build/target/release/polaris /usr/local/bin/polaris
